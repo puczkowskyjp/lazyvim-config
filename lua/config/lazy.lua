@@ -14,12 +14,24 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.lsp.config("roslyn", {})
+
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- immport any extra modules here
+    { import = "lazyvim.plugins.extras.lang.typescript" },
+    { import = "lazyvim.plugins.extras.lang.json" },
+    { import = "lazyvim.plugins.extras.ui.mini-animate" },
     -- import/override with your plugins
     { import = "plugins" },
+    { import = "plugins.dap.mason-vim-dap" },
+    { import = "plugins.extras.utils.gitui" },
+    { import = "plugins.lsp.nvim-lspconfig" },
+    { import = "plugins.snacks.snacks" },
+    { import = "plugins.telescope.nvim-telescope" },
+    { import = "plugins.treesitter.nvim-treesitter" },
   },
   defaults = {
     -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
