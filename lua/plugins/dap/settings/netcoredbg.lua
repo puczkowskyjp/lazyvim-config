@@ -1,24 +1,55 @@
 local M = {}
 
+local path_join = vim.fs.joinpath
+
 local function get_netcoredbg_path()
-  -- return vim.fn.exepath("netcoredbg") ~= "" and vim.fn.exepath("netcoredbg")
   local mason_packages = require("mason.settings").current.install_root_dir
-  return (mason_packages .. "\\packages\\netcoredbg\\netcoredbg\\netcoredbg.exe")
+  local package_directory = path_join(mason_packages, "packages", "netcoredbg")
+
+  if vim.fn.has("win32") == 1 then
+    return path_join(package_directory, "netcoredbg", "netcoredbg.exe")
+  end
+
+  return path_join(package_directory, "netcoredbg")
 end
 
 local function get_dll_path()
   local cwd = vim.fn.getcwd()
-  local raw_matches = vim.fn.glob(cwd .. "\\bin\\Debug\\**\\*.dll", true, true)
+  local debug_directory = path_join(cwd, "bin", "Debug")
+  local raw_matches = vim.fn.glob(path_join(debug_directory, "**", "*.dll"), true, true)
+  local launchable_dlls = {}
+
   for _, path in ipairs(raw_matches) do
-    if not path:match("[/\\]obj[/\\]") and not path:match("[/\\]ref[/\\]") and not path:match("[/\\]publish[/\\]") then
-      return path
+    local base_path = path:sub(1, -5)
+    local has_runtime_config = vim.uv.fs_stat(base_path .. ".runtimeconfig.json") ~= nil
+    local has_dependencies = vim.uv.fs_stat(base_path .. ".deps.json") ~= nil
+
+    if has_runtime_config and has_dependencies then
+      table.insert(launchable_dlls, path)
     end
   end
-  return vim.fn.input("Path to dll: ", cwd .. "\\bin\\Debug\\", "file")
+
+  if #launchable_dlls == 1 then
+    return launchable_dlls[1]
+  end
+
+  if #launchable_dlls > 1 then
+    local choices = { "Select the .NET application to debug:" }
+    for _, path in ipairs(launchable_dlls) do
+      table.insert(choices, path)
+    end
+    local selection = vim.fn.inputlist(choices)
+    if selection == 0 then
+      error("No .NET application target selected")
+    end
+    return launchable_dlls[selection]
+  end
+
+  return vim.fn.input("Path to dll: ", debug_directory .. "/", "file")
 end
 
 local function load_launch_settings()
-  local settings_path = vim.fn.getcwd() .. "\\Properties\\launchSettings.json"
+  local settings_path = path_join(vim.fn.getcwd(), "Properties", "launchSettings.json")
   local f = io.open(settings_path, "r")
   if not f then
     return nil
@@ -49,7 +80,7 @@ local function build_configurations()
       end
 
       table.insert(configs, {
-        type = "netcoredbg",
+        type = "coreclr",
         name = "NetCoreDbg: " .. profile_name,
         request = "launch",
         cwd = "${workspaceFolder}",
@@ -91,8 +122,8 @@ function M.setup()
     },
   }
 
-  dap.adapters.netcoredbg = adapter
-  -- dap.adapters.coreclr = adapter
+  -- dap.adapters.netcoredbg = adapter
+  dap.adapters.coreclr = adapter
 
   local configs = build_configurations()
 
