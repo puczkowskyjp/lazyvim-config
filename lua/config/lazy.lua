@@ -27,7 +27,6 @@ require("lazy").setup({
     -- import/override with your plugins
     { import = "plugins" },
     { import = "plugins.dap.mason-vim-dap" },
-    { import = "plugins.extras.utils.gitui" },
     { import = "plugins.lsp.nvim-lspconfig" },
     { import = "plugins.snacks.snacks" },
     { import = "plugins.telescope.nvim-telescope" },

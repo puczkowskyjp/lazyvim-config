@@ -105,4 +105,42 @@ function M.setup()
   end
 end
 
+-- return M
+
+-- MVP: prove that nvim-dap -> netcoredbg -> .NET DLL works.
+function M.setup_mvp()
+  local dap = require("dap")
+
+  local netcoredbg = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg\\netcoredbg.exe"
+
+  dap.adapters.coreclr = {
+    type = "executable",
+    command = netcoredbg,
+    args = { "--interpreter=vscode" },
+    options = {
+      detached = false,
+    },
+  }
+
+  dap.configurations.cs = {
+    {
+      type = "coreclr",
+      name = "MVP - Launch .NET",
+      request = "launch",
+
+      program = function()
+        return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\", "file")
+      end,
+      cwd = "${workspaceFolder}",
+    },
+  }
+
+  vim.notify("MVP .NET debugger configured", vim.log.levels.INFO)
+end
+
+-- Existing setup - leave this commented out while testing MVP.
+-- function M.setup()
+--   ...
+-- end
+
 return M
