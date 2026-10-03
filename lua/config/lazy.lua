@@ -14,8 +14,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.lsp.config("roslyn", {})
-
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
@@ -26,8 +24,8 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     -- import/override with your plugins
     { import = "plugins" },
-    { import = "plugins.dap.mason-vim-dap" },
-    { import = "plugins.lsp.nvim-lspconfig" },
+    { import = "plugins.dap" },
+    { import = "plugins.lsp" },
     { import = "plugins.snacks.snacks" },
     { import = "plugins.telescope.nvim-telescope" },
     { import = "plugins.treesitter.nvim-treesitter" },
