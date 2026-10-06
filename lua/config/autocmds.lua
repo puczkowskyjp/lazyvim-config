@@ -15,3 +15,12 @@ vim.api.nvim_create_autocmd({ "FocusGained", "WinEnter" }, {
     end
   end,
 })
+
+-- Handle comments in json files for appsettings.*.json
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  -- Match appsettings.* pattern
+  pattern = { "appsettings.json", "appsettings.*.json" },
+  callback = function()
+    vim.bo.filetype = "jsonc"
+  end,
+})

@@ -1,47 +1,4 @@
 return {
-  -- {
-  --   "mason-org/mason.nvim",
-  --   config = function()
-  --     require("mason").setup()
-  --   end,
-  --   opts = {
-  --     registries = {
-  --       "github:mason-org/mason-registry",
-  --       "github:Crashdummyy/mason-registry",
-  --     },
-  --     ensure_installed = {
-  --       "shellcheck",
-  --       --     "shfmt",
-  --       --     "flake8",
-  --       "gopls",
-  --       "lua-language-server",
-  --       --
-  --       --     "xmlformatter",
-  --       --     "csharpier",
-  --       --     "prettier",
-  --       --
-  --       "stylua",
-  --       "bicep-lsp",
-  --       "html-lsp",
-  --       "css-lsp",
-  --       "eslint-lsp",
-  --       "typescript-language-server",
-  --       "json-lsp",
-  --       --
-  --       "roslyn",
-  --       --
-  --       --     "tree-sitter-cli",
-  --     },
-  --   },
-  -- },
-  -- {
-  --   "mason-org/mason-lspconfig.nvim",
-  --   config = function()
-  --     require("mason-lspconfig").setup({
-  --       ensure_installed = { "lua_ls", "gopls" },
-  --     })
-  --   end,
-  -- },
   {
     "neovim/nvim-lspconfig",
     dependencies = {
